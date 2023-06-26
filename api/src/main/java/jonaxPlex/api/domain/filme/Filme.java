@@ -25,26 +25,17 @@ public class Filme {
     private String imagem;
 
 
-    public Filme(String nome, int ano, int duracao, Classificacao classificacao, Genero genero, String imagem){
-        this.nome = nome;
-        this.ano = ano;
-        this.duracao = duracao;
-        this.classificacao = classificacao.getIdade();
-        this.genero = genero;
+    public Filme(DadosCadastrarFilme dados) {
+        this.nome = dados.nome();
+        this.ano = dados.ano();
+        this.duracao = dados.duracao();
+        this.classificacao = dados.classificacao();
+        this.genero = dados.genero();
         this.ativo = true;
-        this.imagem = imagem;
-    }
-
-    public Filme(String nome, int ano, int duracao, int classificacao, Genero genero, String imagem) {
-        this.nome = nome;
-        this.ano = ano;
-        this.duracao = duracao;
-        this.classificacao = classificacao;
-        this.genero = genero;
-        this.ativo = true;
-        this.imagem = imagem;
+        this.imagem = dados.imagem();
 
     }
+
 
     public void atualizarInformacoes(DadosAtualizarFilme dados) {
         if(dados.nome() != null){
@@ -61,6 +52,9 @@ public class Filme {
         }
         if(dados.genero() != null){
             this.genero = dados.genero();
+        }
+        if(dados.imagem() != null){
+            this.imagem = dados.imagem();
         }
 
     }

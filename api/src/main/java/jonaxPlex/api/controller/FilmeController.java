@@ -11,6 +11,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
+
 import java.util.List;
 
 
@@ -26,15 +28,22 @@ public class FilmeController {
 
     @PostMapping
     @Transactional
-    public void cadastrar(@RequestBody @Valid DadosCadastrarFilme dados){
-        repository.save(new Filme(dados.nome(), dados.ano(), dados.duracao(), dados.classificacao(), dados.genero(), dados.imagem()));
+    public ResponseEntity cadastrar(@RequestBody @Valid DadosCadastrarFilme dados, UriComponentsBuilder uriBuilder){
+        var filme = new Filme(dados);
+        repository.save(filme);
+
+        var uri = uriBuilder.path("/pacientes/{id}").buildAndExpand(filme.getId()).toUri();
+
+        return ResponseEntity.created(uri).body(new DadosDetalharFilme(filme));
     }
 
     @PutMapping
     @Transactional
-    public void atualizar(@RequestBody DadosAtualizarFilme dados){
+    public ResponseEntity atualizar(@RequestBody DadosAtualizarFilme dados){
         var filme = repository.getReferenceById(dados.id());
         filme.atualizarInformacoes(dados);
+
+        return ResponseEntity.ok(new DadosDetalharFilme(filme));
 
     }
 
@@ -46,16 +55,17 @@ public class FilmeController {
 
     @DeleteMapping("/{id}")
     @Transactional
-    public void excluir(@PathVariable Long id){
+    public ResponseEntity excluir(@PathVariable Long id){
         var filme = repository.getReferenceById(id);
         filme.excluir();
+
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity detalhar(@PathVariable Long id){
         var filme = repository.getReferenceById(id);
-        return ResponseEntity.ok(new DadosCadastrarFilme(filme.getNome(), filme.getAno(),
-                filme.getDuracao(), filme.getClassificacao(), filme.getGenero(), filme.getImagem()));
+        return ResponseEntity.ok(new DadosDetalharFilme(filme));
     }
 
     public Filme buscarPorId(Long id){

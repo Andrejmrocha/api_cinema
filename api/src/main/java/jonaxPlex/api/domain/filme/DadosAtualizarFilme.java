@@ -9,6 +9,7 @@ public record DadosAtualizarFilme(
         int ano,
         int duracao,
         int classificacao,
-        Genero genero
+        Genero genero,
+        String imagem
 ) {
 }
